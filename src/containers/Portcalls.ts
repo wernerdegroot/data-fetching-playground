@@ -20,9 +20,9 @@ export function mapStateToProps(appState: IAppState): Pick<IPortcallsProps, 'por
   }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<Action>) {
+export function mapDispatchToProps(dispatch: Dispatch<IAppState>) {
   return {
-    dispatchAction: (d: Dispatchable<Action, IAppState>) => {
+    dispatchAction: (d: ThunkAction<IAppState, Action>) => {
       dispatch(d)
     }
   }
