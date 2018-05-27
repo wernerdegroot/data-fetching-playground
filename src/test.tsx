@@ -1,7 +1,18 @@
-import * as React from 'react';
-import * as ReactDOM from "react-dom";
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { store } from './store'
+import { Filter } from './containers/Filter'
+import { Portcalls } from './containers/Portcalls'
 
 ReactDOM.render(
-  (<h1>Henk</h1>),
-  document.getElementById("example")
-);
+  (
+    <Provider store={store}>
+      <>
+        <Filter/>
+        <Portcalls/>
+      </>
+    </Provider>
+  ),
+  document.getElementById('example')
+)
