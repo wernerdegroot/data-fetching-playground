@@ -1,16 +1,29 @@
 import { IPortcallsProps, Portcalls as PresentationalComponent } from '../components/Portcalls'
-import { connect } from 'react-redux'
+import { connect, Dispatch } from 'react-redux'
 import { IAppState } from '../state/IAppState'
+import * as Results from '../util/Results'
+import { areEqual } from '../state/IFilter'
+import { Action, fetchPortcallsAction } from '../Action'
+import { IPortcall } from '../state/IPortcall'
 
-export function mapStateToProps(appState: IAppState): IPortcallsProps {
+export function mapStateToProps(appState: IAppState): Pick<IPortcallsProps, 'portcalls' | 'actions'> {
 
-  const portcallsThatMatchFilter = appState.portcalls.filter(portcall =>
-    portcall.berths.some(berth => appState.filter.some(selectedBerth => selectedBerth === berth))
-  )
+  const portcalls: IPortcall[] = Results.mostRecent(appState.portcalls, appState.filter, areEqual, [])
+  const actions = Results.actions(appState.portcalls, appState.filter, areEqual, fetchPortcallsAction())
 
   return {
-    portcalls: portcallsThatMatchFilter
+    portcalls,
+    actions
   }
 }
 
-export const Portcalls = connect(mapStateToProps)(PresentationalComponent)
+export function mapDispatchToProps(dispatch: Dispatch<Action>) {
+  return {
+    dispatchAction: (action: Action) => {
+      console.log(action)
+      dispatch(action)
+    }
+  }
+}
+
+export const Portcalls = connect(mapStateToProps, mapDispatchToProps)(PresentationalComponent)
