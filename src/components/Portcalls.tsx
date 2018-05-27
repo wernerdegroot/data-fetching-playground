@@ -1,12 +1,14 @@
 import * as React from 'react'
 import { IPortcall } from '../state/IPortcall'
 import { Action } from '../Action'
+import { IAppState } from '../state/IAppState'
+import { Dispatchable } from '../util/ThunkAction'
 
 export interface IPortcallsProps {
   portcalls: IPortcall[]
 
-  actions: Action[]
-  dispatchAction: (action: Action) => void
+  actions: Dispatchable<Action, IAppState>[]
+  dispatchAction: (d: Dispatchable<Action, IAppState>) => void
 }
 
 export class Portcalls extends React.PureComponent<IPortcallsProps> {

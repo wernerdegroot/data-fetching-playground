@@ -1,15 +1,18 @@
 import { IPortcallsProps, Portcalls as PresentationalComponent } from '../components/Portcalls'
-import { connect, Dispatch } from 'react-redux'
+import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 import { IAppState } from '../state/IAppState'
 import * as Results from '../util/Results'
 import { areEqual } from '../state/IFilter'
 import { Action, fetchPortcallsAction } from '../Action'
 import { IPortcall } from '../state/IPortcall'
+import { Dispatchable, ThunkAction } from '../util/ThunkAction'
 
 export function mapStateToProps(appState: IAppState): Pick<IPortcallsProps, 'portcalls' | 'actions'> {
 
   const portcalls: IPortcall[] = Results.mostRecent(appState.portcalls, appState.filter, areEqual, [])
-  const actions = Results.actions(appState.portcalls, appState.filter, areEqual, fetchPortcallsAction())
+  const action: ThunkAction<IAppState, Action> = fetchPortcallsAction()
+  const actions = Results.actions<string[], Dispatchable<Action, IAppState>>(appState.portcalls, appState.filter, areEqual, action)
 
   return {
     portcalls,
@@ -19,9 +22,8 @@ export function mapStateToProps(appState: IAppState): Pick<IPortcallsProps, 'por
 
 export function mapDispatchToProps(dispatch: Dispatch<Action>) {
   return {
-    dispatchAction: (action: Action) => {
-      console.log(action)
-      dispatch(action)
+    dispatchAction: (d: Dispatchable<Action, IAppState>) => {
+      dispatch(d)
     }
   }
 }

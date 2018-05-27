@@ -30,7 +30,7 @@ export function fetchPortcallsAction(): ThunkAction<IAppState, Action> {
       const portcallsThatMatchFilter = defaultPortcalls.filter(portcall =>
         portcall.berths.some(berth => state.filter.some(selectedBerth => selectedBerth === berth))
       )
-      dispatch(resultReceivedAction<string[], IPortcall[]>('portcalls', requestId, state.filter, po))
+      dispatch(resultReceivedAction<string[], IPortcall[]>('portcalls', requestId, state.filter, portcallsThatMatchFilter, new Date()))
     }, 5000)
     return Promise.resolve(4)
   }
