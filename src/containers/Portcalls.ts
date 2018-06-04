@@ -1,31 +1,30 @@
+import * as React from 'react'
 import { IPortcallsProps, Portcalls as PresentationalComponent } from '../components/Portcalls'
-import { connect } from 'react-redux'
+import { connect, MapStateToPropsParam, MapDispatchToPropsParam, InferableComponentEnhancerWithProps } from 'react-redux'
 import { Dispatch } from 'redux'
+import { ThunkAction } from 'redux-thunk'
 import { IAppState } from '../state/IAppState'
 import * as Results from '../util/Results'
 import { areEqual } from '../state/IFilter'
 import { Action, fetchPortcallsAction } from '../Action'
 import { IPortcall } from '../state/IPortcall'
-import { Dispatchable, ThunkAction } from '../util/ThunkAction'
+import { connectAsync } from '../util/ResolvedAsync';
+import { asyncPortcallsSelector } from '../selectors/asyncPortcallsSelector';
 
-export function mapStateToProps(appState: IAppState): Pick<IPortcallsProps, 'portcalls' | 'actions'> {
-
-  const portcalls: IPortcall[] = Results.mostRecent(appState.portcalls, appState.filter, areEqual, [])
-  const action: ThunkAction<IAppState, Action> = fetchPortcallsAction()
-  const actions = Results.actions<string[], Dispatchable<Action, IAppState>>(appState.portcalls, appState.filter, areEqual, action)
-
+export function mapStateToAsyncProps(appState: IAppState) {
   return {
-    portcalls,
-    actions
+    portcalls: asyncPortcallsSelector(appState)
+  }
+}
+
+export function mapStateToNonAsyncProps(appState: IAppState) {
+  return {
+    loadingMessage: 'Loading...'
   }
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<IAppState>) {
-  return {
-    dispatchAction: (d: ThunkAction<IAppState, Action>) => {
-      dispatch(d)
-    }
-  }
+  return {}
 }
 
-export const Portcalls = connect(mapStateToProps, mapDispatchToProps)(PresentationalComponent)
+export const Portcalls = connectAsync(mapStateToAsyncProps, mapStateToNonAsyncProps, mapDispatchToProps)(PresentationalComponent)

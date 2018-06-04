@@ -1,13 +1,16 @@
 import { AWAITING_RESULT, REQUEST_CANCELLED, RESULT_EXPIRED, RESULT_RECEIVED } from './consts'
 import * as CacheItem from './CacheItem'
 
-export function mostRecent<Key, Result, Alternative>(cacheItems: CacheItem.CacheItem<Key, Result>[], key: Key, keysAreEqual: (left: Key, right: Key) => boolean, alternative: Alternative): Result | Alternative {
-  const results = allAvailable(cacheItems, key, keysAreEqual)
 
-  if (results.length > 0) {
-    return results[0]
-  } else {
-    return alternative
+export type AsyncResult<Result, Action> = Readonly<{
+  results: Result[],
+  actions: Action[]
+}>
+
+export function asyncResult<Key, Result, Action>(cacheItems: CacheItem.CacheItem<Key, Result>[], key: Key, keysAreEqual: (left: Key, right: Key) => boolean, action: Action): AsyncResult<Result, Action> {
+  return {
+    results: allAvailable(cacheItems, key, keysAreEqual),
+    actions: actions(cacheItems, key, keysAreEqual, action)
   }
 }
 

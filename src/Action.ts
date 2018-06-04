@@ -1,6 +1,7 @@
 import { Action as DataAction, awaitingResultAction, resultReceivedAction } from './util/Action'
-import { ThunkAction } from './util/ThunkAction'
 import { IAppState } from './state/IAppState'
+import { ThunkAction } from 'redux-thunk'
+import { Dispatch } from 'redux'
 import { defaultPortcalls, IPortcall } from './state/IPortcall'
 
 export type Action = IToggleBerthAction | DataAction<any, any>
@@ -20,8 +21,8 @@ export function toggleBerthAction(berth: string): IToggleBerthAction {
 }
 
 let nextId = 0
-export function fetchPortcallsAction(): ThunkAction<IAppState, Action> {
-  return (dispatch, getState) => {
+export function fetchPortcallsAction(): ThunkAction<Promise<number>, IAppState, void> {
+  return (dispatch: Dispatch<IAppState>, getState: () => IAppState) => {
     const state = getState()
     const requestId = nextId + ''
     nextId++
