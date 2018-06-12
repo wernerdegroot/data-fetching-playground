@@ -10,10 +10,11 @@ import { Action, fetchPortcallsAction } from '../Action'
 import { IPortcall } from '../state/IPortcall'
 import { connectAsync } from '../util/ResolvedAsync';
 import { asyncPortcallsSelector } from '../selectors/asyncPortcallsSelector';
+import { asyncShipLocationsSelector } from '../selectors/asyncShipLocationsSelector';
 
 export function mapStateToAsyncProps(appState: IAppState) {
   return {
-    portcalls: asyncPortcallsSelector(appState)
+    positions: asyncShipLocationsSelector(appState)
   }
 }
 

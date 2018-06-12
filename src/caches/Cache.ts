@@ -57,8 +57,8 @@ export class Cache<Key, Result, State> {
   private requestId = 0
 
   constructor(
-    private readonly cacheId: string,
-    private readonly keysAreEqual: (left: Key, right: Key) => boolean,
+    public readonly cacheId: string,
+    public readonly keysAreEqual: (left: Key, right: Key) => boolean,
     private readonly cacheSelector: (state: State) => CacheItem<Key, Result>[]
   ) {
 

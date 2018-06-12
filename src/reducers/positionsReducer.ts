@@ -1,6 +1,10 @@
 import { IPosition } from '../state/IPosition'
 import { Action } from '../Action'
+import { createCacheItemsReducer } from '../util/createCacheItemsReducer';
+import { positionsCache } from '../caches/positionsCache';
 
-export function positionsReducer(positions: IPosition[] = [], action: Action): IPosition[] {
-  return positions
-}
+export const positionsReducer = createCacheItemsReducer<string[], IPosition[]>(
+  positionsCache.cacheId,
+  positionsCache.keysAreEqual,
+  5
+)

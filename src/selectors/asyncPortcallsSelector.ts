@@ -25,10 +25,12 @@ export const asyncPortcallsSelector = createSelector(
       .getFor(filter)
       .orElse(() =>
         new Promise(resolve => {
+          console.log('Fetching portcalls', filter)
           setTimeout(() => {
             const portcallsThatMatchFilter = defaultPortcalls.filter(portcall =>
               portcall.berths.some(berth => filter.some(selectedBerth => selectedBerth === berth))
             )
+            console.log('Done fetching portcalls', filter)
             resolve(portcallsThatMatchFilter)
           }, 5000)
         })

@@ -7,6 +7,6 @@ import { CacheItem } from '../util/CacheItem'
 export interface IAppState {
   berths: IBerth[]
   portcalls: CacheItem<string[], IPortcall[]>[]
-  positions: IPosition[]
+  positions: CacheItem<string[], IPosition[]>[]
   filter: IFilter
 }

@@ -1,11 +1,25 @@
 import { AWAITING_RESULT, REQUEST_CANCELLED, RESULT_EXPIRED, RESULT_RECEIVED } from './consts'
 import * as CacheItem from './CacheItem'
+import { flatten } from './utils';
 
 
 export type AsyncResult<Result, Action> = Readonly<{
   results: Result[],
   actions: Action[]
 }>
+
+export function flatMap<A, B, Action>(ar: AsyncResult<A, Action>, fn: (a: A) => AsyncResult<B, Action>): AsyncResult<B, Action> {
+  const mappedResults = ar.results.map(fn)
+  const results = flatten(mappedResults.map(mr => mr.results))
+  const actions = ar.actions.length > 0
+    ? ar.actions
+    : (mappedResults.length > 0 ? mappedResults[0].actions : [])
+
+  return {
+    results,
+    actions
+  }
+}
 
 export function asyncResult<Key, Result, Action>(cacheItems: CacheItem.CacheItem<Key, Result>[], key: Key, keysAreEqual: (left: Key, right: Key) => boolean, action: Action): AsyncResult<Result, Action> {
   return {
