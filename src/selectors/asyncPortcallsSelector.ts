@@ -1,17 +1,25 @@
+import { portcallsCache } from "../caches/portcallsCache";
 import { IAppState } from "../state/IAppState";
-import { ThunkAction } from "redux-thunk";
-import { fetchPortcallsAction } from "../Action";
-import * as Results from '../util/Results'
-import { IPortcall } from "../state/IPortcall";
-import { areEqual } from "../state/IFilter";
+import { defaultPortcalls } from "../state/IPortcall";
+import { createSelector } from 'reselect'
 
-export function asyncPortcallsSelector(appState: IAppState) {
-  // The action to fire when the data is not available. This action (thunk)
-  // will start a request:
-  const action: ThunkAction<void, IAppState, void> = fetchPortcallsAction()
+const filtersSelector = (appState: IAppState) => appState.filter
 
-  // The portcalls that are available (might not be there yet, because a request might be running)
-  const portcalls: Results.AsyncResult<IPortcall[], typeof action> = Results.asyncResult(appState.portcalls, appState.filter, areEqual, action)
-
-  return portcalls
-}
+export const asyncPortcallsSelector = createSelector(
+  filtersSelector,
+  portcallsCache.selector,
+  (filter, portcallsCache) => {
+    return portcallsCache
+      .getFor(filter)
+      .orElse(() =>
+        new Promise(resolve => {
+          setTimeout(() => {
+            const portcallsThatMatchFilter = defaultPortcalls.filter(portcall =>
+              portcall.berths.some(berth => filter.some(selectedBerth => selectedBerth === berth))
+            )
+            resolve(portcallsThatMatchFilter)
+          }, 5000)
+        })
+      )
+  }
+)
