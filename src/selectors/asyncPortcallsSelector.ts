@@ -9,6 +9,18 @@ export const asyncPortcallsSelector = createSelector(
   filtersSelector,
   portcallsCache.selector,
   (filter, portcallsCache) => {
+
+    /*
+    In the future will be something like:
+
+    ```typescript
+    portcallsCache
+      .getFor(filter)
+      .orElse(() => fetch(`/api/portcalls?berths=${filter.berths}`))
+    ```
+
+    */
+
     return portcallsCache
       .getFor(filter)
       .orElse(() =>
